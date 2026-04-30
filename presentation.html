@@ -36,7 +36,7 @@
     <section class="slide" id="problem">
       <div class="slide-number">01 / 17</div>
       <span class="tag">PROBLEM</span>
-      <h2>연구 배경</h2>
+      <h2>문제의식</h2>
       <p class="lead">LLM의 프로그래밍 언어 처리 능력은 아직 연구 진행 중이다.</p>
       <ul>
         <li>컴파일러는 <strong>동적 런타임 오류</strong>를 놓칠 수 있음 → 정적분석 도구 필요</li>
@@ -134,6 +134,7 @@
       <div class="slide-number">04 / 17</div>
       <span class="tag">EVALUATION</span>
       <h2>LLM 평가 기법</h2>
+      <p class="lead">한 가지 지표만으로는 한계가 있어, 표면 유사도·지식/추론·코드 수행 능력을 함께 평가</p>
 
       <div class="cards">
         <div class="card">
@@ -144,17 +145,17 @@
         <div class="card">
           <div class="card-title">MMLU</div>
           <div class="card-value">57주제 · 15,908문항</div>
-          <div class="card-desc">멀티태스크 종합 평가</div>
+          <div class="card-desc">범용 지식·추론 성능 확인</div>
         </div>
         <div class="card">
           <div class="card-title">HumanEval</div>
           <div class="card-value">164개 코드 문제</div>
-          <div class="card-desc">코드 생성 능력 표준 벤치마크</div>
+          <div class="card-desc">생성 코드의 실행 기반 정답률 평가</div>
         </div>
       </div>
 
       <div class="callout">
-        동일 결과의 프로그램도 개발자마다 다른 코드로 작성됨. 정교한 평가에는 <strong>인간 개입</strong>도 고려 필요.
+        결론적으로 BLEU/ROUGE는 "표현 유사도", MMLU는 "범용 추론", HumanEval은 "실행 가능한 코드"를 본다. 동일 결과의 프로그램도 구현 방식이 달라질 수 있어 정교한 평가에는 <strong>인간 개입</strong>도 고려 필요.
       </div>
       <div class="glossary">
         <div class="term"><span class="term-name">N-gram</span><span class="term-def">문장 내 인접한 N개 단어를 묶은 집합. 유사도 계산의 기본 단위</span></div>
@@ -325,17 +326,17 @@
         <div class="col sonar">
           <h4>● SonarQube</h4>
           <ul>
-            <li>Maven 빌드 <strong>먼저</strong></li>
-            <li>컴파일된 클래스 파일 분석</li>
-            <li><code>qualityGate.status</code> ≠ OK → 중단</li>
+            <li>Maven 빌드와 SonarScanner를 <strong>먼저</strong> 수행</li>
+            <li>컴파일된 클래스 파일 기준으로 분석 수행</li>
+            <li><code>qualityGate.status</code>가 OK가 아니면 파이프라인 중단</li>
           </ul>
         </div>
         <div class="col gpt">
           <h4>● GPT-4 (LLM)</h4>
           <ul>
-            <li>빌드 <strong>전</strong>에 작동</li>
-            <li>원본 .java 파일 직접 분석</li>
-            <li>하나라도 F → 파이프라인 중단</li>
+            <li>빌드 <strong>전</strong> 원본 <code>.java</code> 파일 직접 분석</li>
+            <li>코드 맥락 기반으로 취약점 여부를 판정</li>
+            <li>결과 중 하나라도 F이면 파이프라인 즉시 중단</li>
           </ul>
         </div>
       </div>
@@ -431,7 +432,7 @@
       </div>
 
       <div class="callout" style="margin-top:24px;">
-        SonarQube는 <strong>빌드 후 클래스 파일</strong> 분석 / LLM은 <strong>빌드 전 .java 파일</strong> 분석.
+        SonarQube 파이프라인은 Maven 빌드와 SonarScanner 과정을 거친 뒤 <code>qualityGate.status</code>가 OK가 아니면 중단되고, GPT-4 기반 파이프라인은 빌드 전에 원본 <code>.java</code> 파일을 직접 분석해 결과 중 하나라도 F이면 즉시 중단된다.
       </div>
       <div class="glossary">
         <div class="term"><span class="term-name">Maven</span><span class="term-def">Java 프로젝트의 빌드·의존성 관리 도구. pom.xml로 설정</span></div>
@@ -514,7 +515,7 @@
         <div class="card">
           <div class="card-title">System Role</div>
           <div class="card-value">정적분석 전문가</div>
-          <div class="card-desc">정적분석 주제에 집중·부합한 응답 유도</div>
+          <div class="card-desc">응답 범위를 정적분석으로 제한해 불필요한 일반 답변을 줄임</div>
         </div>
         <div class="card">
           <div class="card-title">User Role</div>
@@ -670,28 +671,29 @@
     <section class="slide" id="future">
       <div class="slide-number">16 / 17</div>
       <span class="tag">FUTURE WORK</span>
-      <h2>향후 과제</h2>
+      <h2>내가 저자라면: 연구 발전 방향</h2>
+      <p class="lead">속도·정확도·재현성을 동시에 높이기 위한 후속 연구 계획</p>
 
       <div class="cards">
         <div class="card">
           <div class="card-title">과제 1</div>
-          <div class="card-value">속도 단축</div>
-          <div class="card-desc">파인튜닝·프롬프팅으로 분석 시간 단축</div>
+          <div class="card-value">데이터셋 확대</div>
+          <div class="card-desc">Java 중심 결과를 Python·C/C++ 및 CWE 유형 확장으로 일반화 검증</div>
         </div>
         <div class="card">
           <div class="card-title">과제 2</div>
-          <div class="card-value">모델 다변화</div>
-          <div class="card-desc">GPT-4 외 다른 LLM 성능 평가</div>
+          <div class="card-value">프롬프트 고도화</div>
+          <div class="card-desc">Zero-Shot 대비 Few-Shot·규칙 결합 프롬프트의 정탐률/오탐률 비교</div>
         </div>
         <div class="card">
           <div class="card-title">과제 3</div>
-          <div class="card-value">취약점 일반화</div>
-          <div class="card-desc">CWE 외 취약점에서도 동일 품질 검증</div>
+          <div class="card-value">비용-성능 최적화</div>
+          <div class="card-desc">모델별 정확도·지연·비용을 함께 측정해 CI/CD 적용 임계값 설계</div>
         </div>
         <div class="card">
           <div class="card-title">과제 4</div>
-          <div class="card-value">결과 가시화</div>
-          <div class="card-desc">콘솔 로그 → 별도 포탈 페이지 구현</div>
+          <div class="card-value">운영 검증 체계</div>
+          <div class="card-desc">재현 가능한 벤치마크 파이프라인과 로그 대시보드로 현장 적용성 검증</div>
         </div>
       </div>
     </section>
